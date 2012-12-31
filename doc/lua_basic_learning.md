@@ -36,6 +36,68 @@ lua中使用变量，赋值后直接用，若没赋值，那值就是nil，若�
 * `string`用单引号或双引号括起来的字符序列，包含以＼开始的的转义字符。
 	* 字符串可以与数字间相互转换，用`tonumber(string)`和`tostring(number)`
 	* 可以用`[[multi line string]]`括起一段字符串。
+	
+##表达式
+
+* 算术：用^表示乘幂
+* 关系：用~=示示不等，非!=
+* 逻辑：用单词 `and or not`表示，其逻辑有些不懂，跟Ｃ语言似乎有些不一样。
+
+```lua
+a and b  --if a == false return a else return b
+a or b   --if a == true return a else return b
+-- why?? @_@
+``` 
+* 连接：两个点`..`，连接两个串或者数字
+* 优先级：`x^y^z = x^(y^z)`
+
+##语法
+* 赋值
+* 代码块就是控制结构，函数体，chunk(文件或文本串)，在这里用local声明的变量，就是局部变量。
+* 控制结构
+	* for有两种形式，一种针对数值的，另一种针对函数。
+	
+```lua
+--if
+if conditions then
+    then-part
+end;
+
+if conditions then
+    then-part
+else
+    else-part
+end;
+
+if conditions then
+    then-part
+elseif conditions then
+    elseif-part
+..            --->multi elseif
+else
+    else-part
+end;
+
+--while
+while condition do
+    statements;
+end;
+
+--do..while
+repeat
+    statements;
+until conditions;
+
+--for
+for var=exp1,exp2,exp3 do
+    loop-part
+end
+
+-- print all values of array 'a'
+for i,v in ipairs(a) do print(v) end
+``` 
+
+* break and return的作用与Ｃ语言一样，不过只能放到语句块的最后，否则语法错误。
 
 ##function
 
