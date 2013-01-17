@@ -91,6 +91,9 @@ until conditions;
 --for
 for var=exp1,exp2,exp3 do
     loop-part
+    exp1 -- init
+    exp2 -- values or max
+    exp3 -- step default 1
 end
 
 -- print all values of array 'a'
