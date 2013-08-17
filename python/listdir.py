@@ -1,4 +1,6 @@
 import os
+import sys
+
 def displayDir(dir):
     for i in os.listdir(dir):
 	file = os.path.join(dir,i)
@@ -13,6 +15,9 @@ def displayDir2(dir):
 	for file in fileList:
 	    print os.path.join(rootDir,file)
 
-displayDir("/Users/z/unixmacos/")
-displayDir2("/Users/z/Music/")
+if len(sys.argv) > 1:
+    displayDir(sys.argv[1])
+
+#displayDir("/Users/z/unixmacos/")
+#displayDir2("/Users/z/Music/")
 
