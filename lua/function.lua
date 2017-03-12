@@ -13,6 +13,7 @@ a[1] = 100
 a["table"] = b
 
 function bar()
+	print('define a function')
 end
 
 a[bar] = foo
