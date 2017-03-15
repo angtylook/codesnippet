@@ -1,0 +1,2 @@
+daytimeserver : dtserver.cpp
+    
