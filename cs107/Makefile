@@ -4,3 +4,5 @@ INC = -I.
 LIBS = -lpthread
 kill : kill.c $(DEPS)
 	gcc $(INC) $(LIBS) -o kill kill.c $(DEPS_SRC)
+snooze : snooze.c $(DEPS)
+	gcc $(INC) $(LIBS) -o $@ snooze.c  $(DEPS_SRC)
