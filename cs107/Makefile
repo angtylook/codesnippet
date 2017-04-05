@@ -8,7 +8,8 @@ snooze : snooze.c $(DEPS)
 	gcc $(INC) $(LIBS) -o $@ snooze.c  $(DEPS_SRC)
 statcheck : statcheck.c $(DEPS)
 	gcc $(INC) $(LIBS) -o $@ statcheck.c  $(DEPS_SRC)
-
+readdir : readdir.c $(DEPS)
+	gcc $(INC) $(LIBS) -o $@ readdir.c  $(DEPS_SRC)
 #.PHONY
 clean:
-	rm kill snooze statcheck
+	rm kill snooze statcheck readdir
