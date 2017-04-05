@@ -6,3 +6,9 @@ kill : kill.c $(DEPS)
 	gcc $(INC) $(LIBS) -o kill kill.c $(DEPS_SRC)
 snooze : snooze.c $(DEPS)
 	gcc $(INC) $(LIBS) -o $@ snooze.c  $(DEPS_SRC)
+statcheck : statcheck.c $(DEPS)
+	gcc $(INC) $(LIBS) -o $@ statcheck.c  $(DEPS_SRC)
+
+#.PHONY
+clean:
+	rm kill snooze statcheck
