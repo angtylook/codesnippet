@@ -77,12 +77,31 @@ void MergeSort(std::vector<int>& arr)
     MergeSortHelper(arr, 0, arr.size());
 }
 
+void printvec(const std::vector<int>& arr, const std::string& msg)
+{
+    std::cout << msg << std::endl;
+    for(auto& e: arr) {
+        std::cout << e << " ";
+    }
+    std::cout << std::endl;
+}
+
 int main()
 {
-    std::vector<int> arr{2, 4, 5, 7, 1, 2, 3, 6};
-    MergeSort(arr);
-    for(auto& e : arr)
-        std::cout << e;
-    std::cout << std::endl;
+    std::vector<int> arr0;
+    MergeSort(arr0);
+    printvec(arr0, "arr0");
+
+    std::vector<int> arr1{1};
+    MergeSort(arr1);
+    printvec(arr1, "arr1");
+
+    std::vector<int> arr2{3,2};
+    MergeSort(arr2);
+    printvec(arr2, "arr2");
+
+    std::vector<int> arrn{2, 4, 5, 7, 1, 2, 3, 6};
+    MergeSort(arrn);
+    printvec(arrn, "arrn");
     return 0;
 }
