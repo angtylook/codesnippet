@@ -1,4 +1,5 @@
 #include "bst.h"
+#include <iostream>
 
 BinarySearchTree::BinarySearchTree()
 : root_(nullptr) {
@@ -19,7 +20,7 @@ bool BinarySearchTree::contain(int key) {
     return node && node->key == key;
 }
 
-bool BinarySearchTree::getValue(int key, std::string& value) {
+bool BinarySearchTree::get(int key, std::string& value) {
     Node* node = search(root_, key);
     if(node && node->key == key) {
         value = node->value;
@@ -76,12 +77,39 @@ void BinarySearchTree::insert_or_assign(int key, const std::string& value) {
 }
 
 bool BinarySearchTree::remove(int key) {
+    Node* node = search(root_, key);
+    if(node) {
+        remove(node);
+        return true;
+    }
     return false;
+}
+
+bool BinarySearchTree::remove_and_get(int key, std::string& value) {
+    Node* node = search(root_, key);
+    if(node) {
+        value = node->value;
+        remove(node);
+        return true;
+    }
+    return false;
+}
+
+void BinarySearchTree::inorder_walk(const std::function<void (int, std::string)>& func) {
+    inorder_walk(root_, func);
+}
+
+void BinarySearchTree::inorder_walk(Node* node, const std::function<void (int, std::string)>& func) {
+    if(node) {
+        inorder_walk(node->left, func);
+        func(node->key, node->value);
+        inorder_walk(node->right, func);
+    }
 }
 
 BinarySearchTree::Node* BinarySearchTree::search(Node* node, int key) {
     while(node && node->key != key) {
-        if(node->key < key) {
+        if(key < node->key) {
             node = node->left;
         } else {
             node = node->right;
@@ -155,10 +183,86 @@ BinarySearchTree::Node* BinarySearchTree::insert(Node* node) {
     return node;
 }
 
+void BinarySearchTree::transplant(Node* to, Node* from) {
+    if(!to->parent) {
+        root_ = from;
+    } else if(to == to->parent->left) {
+        to->parent->left = from;
+    } else {
+        to->parent->right = from;
+    }
+    if(from)
+        from->parent = to->parent;
+}
+
+void BinarySearchTree::remove(Node* node) {
+    if(!node->left) {
+        transplant(node, node->right);
+    } else if(!node->right) {
+        transplant(node, node->left);
+    } else {
+        // then mini's left must be null.
+        // otherwist mini will not be minimum.
+        Node* mini = minimum(node->right);
+        if(mini->parent != node) {
+            // after replace mini with its right
+            // then mini is free to replace node
+            transplant(mini, mini->right);
+            // take off node's right
+            mini->right = node->right;
+            mini->right->parent = mini;
+        }
+        // if mini's parent is node
+        // node's right is mini
+        transplant(node, mini);
+        // handle node's left
+        mini->left = node->left;
+        mini->left->parent = mini;
+    }
+    delete node;
+}
+
 void BinarySearchTree::destroy(Node* node) {
     if(node) {
         destroy(node->left);
         destroy(node->right);
         delete node;
     }
+}
+
+int main(int argc, char* argv[])
+{
+    BinarySearchTree bst;
+    bst.insert(3, "three");
+    bst.insert(2, "two");
+    bst.insert(7, "seven");
+    bst.insert(13, "13");
+    bst.insert(15, "15");
+    bst.insert(9, "nine");
+    bst.insert(4, "four");
+    bst.insert(6, "six");
+    bst.insert(18, "18");
+    bst.insert(20, "20");
+    bst.insert(17, "17");
+    std::cout << "{" << std::endl;
+    bst.inorder_walk([](int key, std::string value) -> void {
+        std::cout << "  { " << key << " : " << value << " }" << std::endl;
+    });
+    std::cout << "}" << std::endl;
+
+    std::string val;
+    if(bst.remove_and_get(7, val)) {
+        std::cout << "remove { 7 : " << val << " }" << std::endl;
+    }
+    val.clear();
+    if(bst.remove_and_get(17, val)) {
+        std::cout << "remove { 17 : " << val << " }" << std::endl;
+    }
+    std::cout << "{" << std::endl;
+    bst.inorder_walk([](int key, std::string value) -> void {
+        std::cout << "  { " << key << " : " << value << " }" << std::endl;
+    });
+    std::cout << "}" << std::endl;
+
+    return 0;
 }

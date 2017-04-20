@@ -2,6 +2,7 @@
 #define BST_H_
 
 #include <string>
+#include <functional>
 
 class BinarySearchTree
 {
@@ -11,13 +12,16 @@ public:
 public:
     bool empty();
     bool contain(int key);
-    bool getValue(int key, std::string& value);
+    bool get(int key, std::string& value);
     bool minimum(std::string& value);
     bool maximum(std::string& value);
 
     bool insert(int key, const std::string& value);
     void insert_or_assign(int key, const std::string& value);
     bool remove(int key);
+    bool remove_and_get(int key, std::string& value);
+
+    void inorder_walk(const std::function<void (int, std::string)>& func);
 private:
     struct Node {
         int key;
@@ -46,6 +50,12 @@ private:
     Node* predecessor(Node* node, int key);
     // insert node into tree
     Node* insert(Node* node);
+    // replace to with from
+    // assert to != nullptr && from != nullptr
+    void transplant(Node* to, Node* from);
+    // remove node, assert node != nullptr
+    void remove(Node* node);
+    void inorder_walk(Node* node, const std::function<void (int, std::string)>& func);
 private:
     Node* root_;
 };
