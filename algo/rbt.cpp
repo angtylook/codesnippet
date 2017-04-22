@@ -232,6 +232,52 @@ void RedBlackTree::remove(Node* node) {
     delete node;
 }
 
+void RedBlackTree::left_rotate(Node* node)
+{
+    // save node's right, it will be in node position
+    Node* right = node->right;
+    // turn node.right.left as node.right
+    node->right = right->left;
+    if(node->right != nil_) {
+        node->right->parent = node;
+    }
+    // replace node position with right
+    right->parent = node->parent;
+    if(right->parent == nil_) {
+        root_ = right;
+    } else if (node->parent->left == node) {
+        node->parent->left = right;
+    } else {
+        node->parent->right = right;
+    }
+    // node as right.left
+    right->left = node;
+    node->parent = right;
+}
+
+void RedBlackTree::right_rotate(Node* node)
+{
+    // save node's left, it will be in node position
+    Node* left = node->left;
+    // turn node.left.right as node.left
+    node->left = left->right;
+    if(node->left != nil_) {
+        node->left->parent = node;
+    }
+    // replace node position with left
+    left->parent = node->parent;
+    if(left->parent == nil_) {
+        root_ = left;
+    } else if (node->parent->left == node) {
+        node->parent->left = left;
+    } else {
+        node->parent->right = left;
+    }
+    // node as left.right
+    left->right = node;
+    node->parent = left;
+}
+
 void RedBlackTree::destroy(Node* node) {
     if(node) {
         destroy(node->left);

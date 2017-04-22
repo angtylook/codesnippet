@@ -62,6 +62,8 @@ private:
     // remove node, assert node != nullptr
     void remove(Node* node);
     void inorder_walk(Node* node, const std::function<void (int, std::string)>& func);
+    void left_rotate(Node* node);
+    void right_rotate(Node* node);
 private:
     Node* root_;
     Node* nil_;
