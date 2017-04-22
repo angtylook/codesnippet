@@ -11,8 +11,8 @@ RedBlackTree::Node::Node()
 }
 
 RedBlackTree::RedBlackTree()
-: root_(nullptr) {
-    nil_ = new Node();
+: nil_(new Node())
+, root_(nil_) {
 }
 
 RedBlackTree::~RedBlackTree() {
@@ -22,17 +22,17 @@ RedBlackTree::~RedBlackTree() {
 }
 
 bool RedBlackTree::empty() {
-    return root_ == nullptr;
+    return root_ == nil_;
 }
 
 bool RedBlackTree::contain(int key) {
     Node* node = search(root_, key);
-    return node && node->key == key;
+    return node != nil_ && node->key == key;
 }
 
 bool RedBlackTree::get(int key, std::string& value) {
     Node* node = search(root_, key);
-    if(node && node->key == key) {
+    if(node != nil_ && node->key == key) {
         value = node->value;
         return true;
     }
@@ -41,7 +41,7 @@ bool RedBlackTree::get(int key, std::string& value) {
 
 bool RedBlackTree::minimum(std::string& value) {
     Node* node = minimum(root_);
-    if(node) {
+    if(node != nil_) {
         value = node->value;
         return true;
     }
@@ -50,7 +50,7 @@ bool RedBlackTree::minimum(std::string& value) {
 
 bool RedBlackTree::maximum(std::string& value) {
     Node* node = maximum(root_);
-    if(node) {
+    if(node != nil_) {
         value = node->value;
         return true;
     }
@@ -59,36 +59,38 @@ bool RedBlackTree::maximum(std::string& value) {
 
 bool RedBlackTree::insert(int key, const std::string& value) {
     Node* node = search(root_, key);
-    if(node)
+    if(node != nil_)
         return false;
     node =  new Node();
     node->key = key;
     node->value = value;
-    node->parent = nullptr;
-    node->left = nullptr;
-    node->right = nullptr;
+    node->parent = nil_;
+    node->left = nil_;
+    node->right = nil_;
+    node->color = RED;
     insert(node);
     return true;
 }
 
 void RedBlackTree::insert_or_assign(int key, const std::string& value) {
     Node* node = search(root_, key);
-    if(node) {
+    if(node != nil_) {
         node->value = value;
     } else {
-        node =  new Node();
+        node = new Node();
         node->key = key;
         node->value = value;
-        node->parent = nullptr;
-        node->left = nullptr;
-        node->right = nullptr;
+        node->parent = nil_;
+        node->left = nil_;
+        node->right = nil_;
+        node->color = RED;
         insert(node);
     }
 }
 
 bool RedBlackTree::remove(int key) {
     Node* node = search(root_, key);
-    if(node) {
+    if(node != nil_) {
         remove(node);
         return true;
     }
@@ -97,7 +99,7 @@ bool RedBlackTree::remove(int key) {
 
 bool RedBlackTree::remove_and_get(int key, std::string& value) {
     Node* node = search(root_, key);
-    if(node) {
+    if(node != nil_) {
         value = node->value;
         remove(node);
         return true;
@@ -110,7 +112,7 @@ void RedBlackTree::inorder_walk(const std::function<void (int, std::string)>& fu
 }
 
 void RedBlackTree::inorder_walk(Node* node, const std::function<void (int, std::string)>& func) {
-    if(node) {
+    if(node != nil_) {
         inorder_walk(node->left, func);
         func(node->key, node->value);
         inorder_walk(node->right, func);
@@ -118,7 +120,7 @@ void RedBlackTree::inorder_walk(Node* node, const std::function<void (int, std::
 }
 
 RedBlackTree::Node* RedBlackTree::search(Node* node, int key) {
-    while(node && node->key != key) {
+    while(node != nil_ && node->key != key) {
         if(key < node->key) {
             node = node->left;
         } else {
@@ -129,27 +131,27 @@ RedBlackTree::Node* RedBlackTree::search(Node* node, int key) {
 }
 
 RedBlackTree::Node* RedBlackTree::minimum(Node* node) {
-    while(node && node->left) {
+    while(node != nil_ && node->left) {
         node = node->left;
     }
     return node;
 }
 
 RedBlackTree::Node* RedBlackTree::maximum(Node* node) {
-    while(node && node->right) {
+    while(node != nil_ && node->right) {
         node = node->right;
     }
     return node;
 }
 
 RedBlackTree::Node* RedBlackTree::successor(Node* node, int key) {
-    if(!node)
-        return nullptr;
+    if(node == nil_)
+        return nil_;
     if(node->right) {
         return minimum(node->right);
     }
     Node* parent = node->parent;
-    while(parent && parent->right == node) {
+    while(parent != nil_ && parent->right == node) {
         node = parent;
         parent = node->parent;
     }
@@ -157,23 +159,24 @@ RedBlackTree::Node* RedBlackTree::successor(Node* node, int key) {
 }
 
 RedBlackTree::Node* RedBlackTree::predecessor(Node* node, int key) {
-    if(!node)
-        return nullptr;
+    if(node == nil_)
+        return nil_;
     if(node->left) {
         return maximum(node->left);
     }
     Node* parent = node->parent;
-    while(parent && parent->left == node) {
+    while(parent != nil_ && parent->left == node) {
         node = parent;
         parent = node->parent;
     }
     return parent;
 }
 
-RedBlackTree::Node* RedBlackTree::insert(Node* node) {
-    Node* leaf = nullptr;
+void RedBlackTree::insert(Node* node) {
+    // find the insert point as leaf
+    Node* leaf = nil_;
     Node* sentry = root_;
-    while(sentry) {
+    while(sentry != nil_) {
         leaf = sentry;
         if(node->key < sentry->key) {
             sentry = sentry->left;
@@ -182,15 +185,14 @@ RedBlackTree::Node* RedBlackTree::insert(Node* node) {
         }
     }
     node->parent = leaf;
-    if(!leaf) {
+    if(leaf == nil_) {
         root_ = node;
-        return root_;
     } else if(node->key < leaf->key) {
         leaf->left = node;
     } else {
         leaf->right = node;
     }
-    return node;
+    insert_fixup(node);
 }
 
 void RedBlackTree::transplant(Node* to, Node* from) {

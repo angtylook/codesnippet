@@ -55,7 +55,8 @@ private:
     // return nullptr if not found
     Node* predecessor(Node* node, int key);
     // insert node into tree
-    Node* insert(Node* node);
+    void insert(Node* node);
+    void insert_fixup(Node* node);
     // replace to with from
     // assert to != nullptr && from != nullptr
     void transplant(Node* to, Node* from);
@@ -65,8 +66,9 @@ private:
     void left_rotate(Node* node);
     void right_rotate(Node* node);
 private:
-    Node* root_;
     Node* nil_;
+    Node* root_;
+
 };
 
 #endif // BST_H_
