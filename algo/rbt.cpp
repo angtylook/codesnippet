@@ -1,36 +1,37 @@
 #include "rbt.h"
 #include <iostream>
 
-RedBlackTree::Node::Node()
-: key(0)
-, parent(nullptr)
-, left(nullptr)
-, right(nullptr)
-, color(BLACK)
-{
-}
-
 RedBlackTree::RedBlackTree()
-: nil_(new Node())
-, root_(nil_) {
+: nil_(nullptr)
+, root_(nullptr) {
+    nil_ = new Node();
+    nil_->parent = nullptr;
+    nil_->left = nullptr;
+    nil_->right = nullptr;
+    nil_->color = BLACK;
 }
 
 RedBlackTree::~RedBlackTree() {
     if(root_) {
         destroy(root_);
     }
+    delete(nil_);
 }
 
 bool RedBlackTree::empty() {
-    return root_ == nil_;
+    return !root_;
 }
 
 bool RedBlackTree::contain(int key) {
+    if(!root_)
+        return false;
     Node* node = search(root_, key);
     return node != nil_ && node->key == key;
 }
 
 bool RedBlackTree::get(int key, std::string& value) {
+    if(!root_)
+        return false;
     Node* node = search(root_, key);
     if(node != nil_ && node->key == key) {
         value = node->value;
@@ -40,6 +41,8 @@ bool RedBlackTree::get(int key, std::string& value) {
 }
 
 bool RedBlackTree::minimum(std::string& value) {
+    if(!root_)
+        return false;
     Node* node = minimum(root_);
     if(node != nil_) {
         value = node->value;
@@ -49,6 +52,8 @@ bool RedBlackTree::minimum(std::string& value) {
 }
 
 bool RedBlackTree::maximum(std::string& value) {
+    if(!root_)
+        return false;
     Node* node = maximum(root_);
     if(node != nil_) {
         value = node->value;
@@ -58,10 +63,13 @@ bool RedBlackTree::maximum(std::string& value) {
 }
 
 bool RedBlackTree::insert(int key, const std::string& value) {
-    Node* node = search(root_, key);
+    Node* node = nil_;
+    if(root_) {
+        node = search(root_, key);
+    }
     if(node != nil_)
         return false;
-    node =  new Node();
+    node = new Node();
     node->key = key;
     node->value = value;
     node->parent = nil_;
@@ -73,7 +81,10 @@ bool RedBlackTree::insert(int key, const std::string& value) {
 }
 
 void RedBlackTree::insert_or_assign(int key, const std::string& value) {
-    Node* node = search(root_, key);
+    Node* node = nil_;
+    if(root_) {
+        node = search(root_, key);
+    }
     if(node != nil_) {
         node->value = value;
     } else {
@@ -108,7 +119,8 @@ bool RedBlackTree::remove_and_get(int key, std::string& value) {
 }
 
 void RedBlackTree::inorder_walk(const std::function<void (int, std::string)>& func) {
-    inorder_walk(root_, func);
+    if(root_)
+        inorder_walk(root_, func);
 }
 
 void RedBlackTree::inorder_walk(Node* node, const std::function<void (int, std::string)>& func) {
@@ -131,14 +143,14 @@ RedBlackTree::Node* RedBlackTree::search(Node* node, int key) {
 }
 
 RedBlackTree::Node* RedBlackTree::minimum(Node* node) {
-    while(node != nil_ && node->left) {
+    while(node != nil_ && node->left != nil_) {
         node = node->left;
     }
     return node;
 }
 
 RedBlackTree::Node* RedBlackTree::maximum(Node* node) {
-    while(node != nil_ && node->right) {
+    while(node != nil_ && node->right != nil_) {
         node = node->right;
     }
     return node;
@@ -176,7 +188,7 @@ void RedBlackTree::insert(Node* node) {
     // find the insert point as leaf
     Node* leaf = nil_;
     Node* sentry = root_;
-    while(sentry != nil_) {
+    while(sentry && sentry != nil_) {
         leaf = sentry;
         if(node->key < sentry->key) {
             sentry = sentry->left;
@@ -193,6 +205,51 @@ void RedBlackTree::insert(Node* node) {
         leaf->right = node;
     }
     insert_fixup(node);
+}
+// introduce to algorithms 3rd, ch 13 red black tree. 
+void RedBlackTree::insert_fixup(Node* node) {
+    while(node->parent->color == RED) {
+        if(node->parent->parent->left == node->left) {
+            Node* uncle = node->parent->parent->right;
+            // case 1
+            if(uncle->color == RED) {
+                node->parent->color = BLACK;
+                uncle->color = BLACK;
+                node->parent->parent->color = RED;
+                node = node->parent->parent;
+            } else {
+                if(node == node->parent->right) {
+                    // case 2
+                    node = node->parent;
+                    left_rotate(node);
+                }
+                // case 3
+                node->parent->color = BLACK;
+                node->parent->parent->color = RED;
+                right_rotate(node->parent->parent);
+            }
+        } else {  // node->parent->parent->right == node->right
+            Node* uncle = node->parent->parent->left;
+            // case 1
+            if(uncle->color == RED) {
+                node->parent->color = BLACK;
+                uncle->color = BLACK;
+                node->parent->parent->color = RED;
+                node = node->parent->parent;
+            } else {
+                if(node == node->parent->left) {
+                    // case 2
+                    node = node->parent;
+                    right_rotate(node);
+                }
+                // case 3
+                node->parent->color = BLACK;
+                node->parent->parent->color = RED;
+                left_rotate(node->parent->parent);
+            }
+        }
+    }
+    root_->color = BLACK;
 }
 
 void RedBlackTree::transplant(Node* to, Node* from) {
@@ -240,7 +297,7 @@ void RedBlackTree::left_rotate(Node* node)
     Node* right = node->right;
     // turn node.right.left as node.right
     node->right = right->left;
-    if(node->right != nil_) {
+    if(node->right && node->right != nil_) {
         node->right->parent = node;
     }
     // replace node position with right
@@ -263,7 +320,7 @@ void RedBlackTree::right_rotate(Node* node)
     Node* left = node->left;
     // turn node.left.right as node.left
     node->left = left->right;
-    if(node->left != nil_) {
+    if(node->left && node->left != nil_) {
         node->left->parent = node;
     }
     // replace node position with left
@@ -281,7 +338,7 @@ void RedBlackTree::right_rotate(Node* node)
 }
 
 void RedBlackTree::destroy(Node* node) {
-    if(node) {
+    if(node && node != nil_) {
         destroy(node->left);
         destroy(node->right);
         delete node;
@@ -307,7 +364,7 @@ int main(int argc, char* argv[])
         std::cout << "  { " << key << " : " << value << " }" << std::endl;
     });
     std::cout << "}" << std::endl;
-
+/*
     std::string val;
     if(bst.remove_and_get(7, val)) {
         std::cout << "remove { 7 : " << val << " }" << std::endl;
@@ -321,6 +378,6 @@ int main(int argc, char* argv[])
         std::cout << "  { " << key << " : " << value << " }" << std::endl;
     });
     std::cout << "}" << std::endl;
-
+*/
     return 0;
 }

@@ -34,7 +34,6 @@ private:
         Node* left;
         Node* right;
         Color color;
-        Node();
     };
 private:
     // destroy tree with node as root
