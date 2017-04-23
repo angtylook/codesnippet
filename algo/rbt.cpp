@@ -100,6 +100,8 @@ void RedBlackTree::insert_or_assign(int key, const std::string& value) {
 }
 
 bool RedBlackTree::remove(int key) {
+    if(!root_)
+        return false;
     Node* node = search(root_, key);
     if(node != nil_) {
         remove(node);
@@ -109,6 +111,8 @@ bool RedBlackTree::remove(int key) {
 }
 
 bool RedBlackTree::remove_and_get(int key, std::string& value) {
+    if(!root_)
+        return false;
     Node* node = search(root_, key);
     if(node != nil_) {
         value = node->value;
@@ -209,7 +213,7 @@ void RedBlackTree::insert(Node* node) {
 // introduce to algorithms 3rd, ch 13 red black tree. 
 void RedBlackTree::insert_fixup(Node* node) {
     while(node->parent->color == RED) {
-        if(node->parent->parent->left == node->left) {
+        if(node->parent->parent->left == node->parent) {
             Node* uncle = node->parent->parent->right;
             // case 1
             if(uncle->color == RED) {
@@ -253,26 +257,31 @@ void RedBlackTree::insert_fixup(Node* node) {
 }
 
 void RedBlackTree::transplant(Node* to, Node* from) {
-    if(!to->parent) {
+    if(to->parent == nil_) {
         root_ = from;
     } else if(to == to->parent->left) {
         to->parent->left = from;
     } else {
         to->parent->right = from;
     }
-    if(from)
-        from->parent = to->parent;
+    from->parent = to->parent;
 }
 
 void RedBlackTree::remove(Node* node) {
-    if(!node->left) {
+    Node* to_fix = nil_;
+    Color color = node->color;
+    if(node->left == nil_) {
+        to_fix = node->right;
         transplant(node, node->right);
-    } else if(!node->right) {
+    } else if(node->right == nil_) {
+        to_fix = node->left;
         transplant(node, node->left);
     } else {
         // then mini's left must be null.
         // otherwist mini will not be minimum.
         Node* mini = minimum(node->right);
+        color = mini->color;
+        to_fix = mini->right;
         if(mini->parent != node) {
             // after replace mini with its right
             // then mini is free to replace node
@@ -280,6 +289,8 @@ void RedBlackTree::remove(Node* node) {
             // take off node's right
             mini->right = node->right;
             mini->right->parent = mini;
+        } else {
+            to_fix->parent = mini;
         }
         // if mini's parent is node
         // node's right is mini
@@ -287,8 +298,71 @@ void RedBlackTree::remove(Node* node) {
         // handle node's left
         mini->left = node->left;
         mini->left->parent = mini;
+        mini->color = node->color;
+    }
+    if(color == BLACK) {
+        remove_fixup(to_fix);
     }
     delete node;
+}
+
+void RedBlackTree::remove_fixup(Node* node) {
+    while(node != root_ && node->color == BLACK) {
+        if(node == node->parent->left) {
+            Node* brother = node->parent->right;
+            if(brother->color == RED) {
+                brother->color = BLACK;
+                node->parent->color = RED;
+                left_rotate(node->parent);
+                brother = node->parent->right;
+            }
+            if(brother->left->color == BLACK && brother->right->color == BLACK) {
+                brother->color = RED;
+                node = node->parent;  // exit loop
+            } else {
+                // because left and right's color not all black
+                // so brother->left is RED
+                if(brother->right->color == BLACK) {
+                    brother->left->color = BLACK;
+                    brother->color = RED;  // after rotate brother will be new brother's right child.
+                    right_rotate(brother);
+                    brother = node->parent->right;
+                }
+                brother->color = node->parent->color;
+                node->parent->color = BLACK;
+                brother->right->color = BLACK;
+                left_rotate(node->parent);
+                node = root_;  // exit loop
+            }
+        } else {  // node == node->parent->right
+            Node* brother = node->parent->left;
+            if(brother->color == RED) {
+                brother->color = BLACK;
+                node->parent->color = RED;
+                right_rotate(node->parent);
+                brother = node->parent->left;
+            }
+            if(brother->left->color == BLACK && brother->right->color == BLACK) {
+                brother->color = RED;
+                node = node->parent;  // exit loop
+            } else {
+                // because left and right's color not all black
+                // so brother->right is RED
+                if(brother->left->color == BLACK) {
+                    brother->right->color = BLACK;
+                    brother->color = RED;
+                    left_rotate(brother);
+                    brother = node->parent->left;
+                }
+                brother->color = node->parent->color;
+                node->parent->color = BLACK;
+                brother->left->color = BLACK;
+                right_rotate(node->parent);
+                node = root_; // exit loop
+            }
+        }
+    }
+    node->color = BLACK;
 }
 
 void RedBlackTree::left_rotate(Node* node)
@@ -364,7 +438,7 @@ int main(int argc, char* argv[])
         std::cout << "  { " << key << " : " << value << " }" << std::endl;
     });
     std::cout << "}" << std::endl;
-/*
+
     std::string val;
     if(bst.remove_and_get(7, val)) {
         std::cout << "remove { 7 : " << val << " }" << std::endl;
@@ -378,6 +452,6 @@ int main(int argc, char* argv[])
         std::cout << "  { " << key << " : " << value << " }" << std::endl;
     });
     std::cout << "}" << std::endl;
-*/
+
     return 0;
 }

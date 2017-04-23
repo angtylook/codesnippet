@@ -61,6 +61,7 @@ private:
     void transplant(Node* to, Node* from);
     // remove node, assert node != nullptr
     void remove(Node* node);
+    void remove_fixup(Node* node);
     void inorder_walk(Node* node, const std::function<void (int, std::string)>& func);
     void left_rotate(Node* node);
     void right_rotate(Node* node);
