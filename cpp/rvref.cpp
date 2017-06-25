@@ -15,8 +15,18 @@ class Widget {
         std::string val_;
 };
 
+void funcsl(std::string& s)
+{
+}
+
+void funcrl(std::string&& s)
+{
+}
+
 void rw(Widget&& w)
 {
+    funcsl(w.val_);
+    funcrl(w.val_);
     WhichType<decltype(w)> wtype;
     WhichType<decltype(w.val_)> mtype;
     WhichType<decltype(std::move(w.val_))> vtype;
