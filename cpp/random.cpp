@@ -14,10 +14,12 @@ int main()
   std::cout << eng << std::endl;
 
   std::normal_distribution<double> distr(10.0, 3.0);
-  std::vector<int> v(20);
+    std::uniform_int_distribution uni(0,100);
+  std::vector<int> v(101);
   for(int i = 0; i < 800; i++) {
-    int num = distr(eng);
-    if(num >= 0 && num < 20) {
+    //int num = distr(eng);
+    int num = uni(eng);
+    if(num >= 0 && num < 100) {
       v[num]++;
     }
   }
