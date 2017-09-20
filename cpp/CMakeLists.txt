@@ -29,4 +29,5 @@ add_executable(move move.cpp)
 add_executable(random random.cpp)
 add_executable(async std_async.cpp)
 add_executable(rvref rvref.cpp)
+add_executable(cmp expr.cpp)
 
