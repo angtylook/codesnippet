@@ -19,7 +19,7 @@ class Vector {
       size_ = rhs.size_;
       arr_ = new double[size_];
       for(int i = 0; i < size_; ++i) {
-	arr_[i] = rhs.arr_[i];
+	    arr_[i] = rhs.arr_[i];
       }
     }
 
