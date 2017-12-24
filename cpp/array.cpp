@@ -2,8 +2,11 @@
 #include <array>
 #include <iostream>
 #include <stdio.h>
+#include <boost/noncopyable.hpp>
+#include "boost/stacktrace.hpp"
+#include "boost/beast.hpp"
 
-class Demo
+class Demo : public boost::noncopyable
 {
 public:
     Demo()
@@ -26,5 +29,6 @@ int main()
 {
     Demo demo;
     demo.showArray();
+    boost::beast::http::request req;
     return 0;
 }

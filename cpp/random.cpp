@@ -14,7 +14,7 @@ int main()
   std::cout << eng << std::endl;
 
   std::normal_distribution<double> distr(10.0, 3.0);
-    std::uniform_int_distribution uni(0,100);
+    std::uniform_int_distribution<int> uni(0,100);
   std::vector<int> v(101);
   for(int i = 0; i < 800; i++) {
     //int num = distr(eng);

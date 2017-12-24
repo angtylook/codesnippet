@@ -3,6 +3,10 @@ project(cpp)
 
 set(CMAKE_CXX_STANDARD 17)
 
+find_package(Boost REQUIRED date_time filesystem program_options)
+message(STATUS ${Boost_LIBRARIES})
+message(STATUS ${Boost_INCLUDE_DIRS})
+
 set(SOURCE_FILES
         const.cpp
         deduct.cpp
@@ -19,7 +23,7 @@ set(SOURCE_FILES
         rvref.cpp
         std_async.cpp)
 
-
+#target_link_libraries (${PROJECT_NAME} ${Boost_LIBRARIES})
 add_executable(constexpr const.cpp)
 add_executable(reg reg.cpp)
 add_executable(deduct deduct.cpp)
@@ -31,4 +35,7 @@ add_executable(async std_async.cpp)
 add_executable(rvref rvref.cpp)
 add_executable(expr expr.cpp)
 add_executable(array array.cpp)
+
+target_include_directories(array PRIVATE ${Boost_INCLUDE_DIRS})
+target_link_libraries(array PRIVATE ${Boost_LIBRARIES})
 
