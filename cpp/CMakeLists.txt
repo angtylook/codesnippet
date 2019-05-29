@@ -28,6 +28,7 @@ set(SOURCE_FILES
 add_executable(constexpr const.cpp)
 add_executable(reg reg.cpp)
 add_executable(deduct deduct.cpp)
+add_executable(delete delete.cpp)
 add_executable(datetime datetime.cpp)
 add_executable(item26 item26.cpp)
 add_executable(move move.cpp)
