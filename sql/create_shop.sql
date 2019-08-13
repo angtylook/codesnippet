@@ -73,5 +73,23 @@ insert into SampleMath(m, n, p) values(5.555, 2, NULL);
 insert into SampleMath(m, n, p) values(NULL, 1, NULL);
 insert into SampleMath(m, n, p) values(8.76, NULL, NULL);
 
+create table SampleStr (
+    str1 varchar(40),
+    str2 varchar(40),
+    str3 varchar(40)
+);
+
+insert into SampleStr(str1, str2, str3) values('opx', 'rt', NULL);
+insert into SampleStr(str1, str2, str3) values('abc', 'def', NULL);
+insert into SampleStr(str1, str2, str3) values('山田', '太郎', '是我');
+insert into SampleStr(str1, str2, str3) values(NULL, 'xyz', NULL);
+insert into SampleStr(str1, str2, str3) values('@!#$%', NULL, NULL);
+insert into SampleStr(str1, str2, str3) values('ABC', NULL, NULL);
+insert into SampleStr(str1, str2, str3) values('aBC', NULL, NULL);
+insert into SampleStr(str1, str2, str3) values('abc太郎', 'abc', 'ABC');
+insert into SampleStr(str1, str2, str3) values('abcdefabc', 'abc', 'ABC');
+insert into SampleStr(str1, str2, str3) values('micmic', 'i', 'I');
+
+
 
 
