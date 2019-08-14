@@ -90,6 +90,55 @@ insert into SampleStr(str1, str2, str3) values('abc太郎', 'abc', 'ABC');
 insert into SampleStr(str1, str2, str3) values('abcdefabc', 'abc', 'ABC');
 insert into SampleStr(str1, str2, str3) values('micmic', 'i', 'I');
 
+select shohin_mei, hanbai_tanka from shohin where hanbai_tanka between 100 and 1000;
+select shohin_mei, hanbai_tanka from shohin where shiire_between in (320, 500, 5000);
 
+create table shohin2 (
+shohin_id char(4) not null,
+shohin_mei varchar(100) not null,
+shohin_bunrui varchar(32) not null,
+hanbai_tanka integer,
+shiire_tanka integer,
+torokubi date,
+primary key (shohin_id)
+);
+insert into shohin2 values('0001', 'T恤衫', '衣服', 1000, 500, '2009-09-20');
+insert into shohin2 values('0002', '打孔器', '办公用品', 500, 320, '2009-09-11');
+insert into shohin2 values('0003', '运动T恤', '衣服', 4000, 2800, NULL);
+insert into shohin2 values('0009', '手套', '衣服', 800, 500, NULL);
+insert into shohin2 values('0010', '水壶', '厨房用品', 2000, 1700, '2009-09-20');
 
+create table tenposhohin(
+    tenpo_id char(4) not null,
+    tenpo_mei varchar(200) not null,
+    shohin_id char(4) not null,
+    suryo integer not null,
+    primary key (tenpo_id, shohin_id)
+);
 
+insert into tenposhohin(tenpo_id, tenpo_mei, shohin_id, suryo) values('000A', '东京', '0001', 30);
+insert into tenposhohin(tenpo_id, tenpo_mei, shohin_id, suryo) values('000A', '东京', '0002', 50);
+insert into tenposhohin(tenpo_id, tenpo_mei, shohin_id, suryo) values('000A', '东京', '0003', 15);
+insert into tenposhohin(tenpo_id, tenpo_mei, shohin_id, suryo) values('000B', '名古屋', '0002', 30);
+insert into tenposhohin(tenpo_id, tenpo_mei, shohin_id, suryo) values('000B', '名古屋', '0003', 120);
+insert into tenposhohin(tenpo_id, tenpo_mei, shohin_id, suryo) values('000B', '名古屋', '0004', 20);
+insert into tenposhohin(tenpo_id, tenpo_mei, shohin_id, suryo) values('000B', '名古屋', '0006', 10);
+insert into tenposhohin(tenpo_id, tenpo_mei, shohin_id, suryo) values('000B', '名古屋', '0007', 40);
+insert into tenposhohin(tenpo_id, tenpo_mei, shohin_id, suryo) values('000C', '大阪', '0003', 20);
+insert into tenposhohin(tenpo_id, tenpo_mei, shohin_id, suryo) values('000C', '大阪', '0004', 50);
+insert into tenposhohin(tenpo_id, tenpo_mei, shohin_id, suryo) values('000C', '大阪', '0006', 90);
+insert into tenposhohin(tenpo_id, tenpo_mei, shohin_id, suryo) values('000C', '大阪', '0007', 70);
+insert into tenposhohin(tenpo_id, tenpo_mei, shohin_id, suryo) values('000D', '福冈', '0001', 100);
+
+select ts.tenpo_id, ts.tenpo_mei, ts.shohin_id, s.shohin_mei, s.hanbai_tanka
+from tenposhohin as ts
+inner join shohin as s
+on ts.shohin_id = s.shohin_id;
+
+select ts.tenpo_id, ts.tenpo_mei, ts.shohin_id, s.shohin_mei, s.hanbai_tanka
+from tenposhohin as ts
+right join shohin as s
+on ts.shohin_id = s.shohin_id;
+
+select ts.tenpo_id, ts.tenpo_mei, ts.shohin_id, s.shohin_mei
+from tenposhohin as ts cross join shohin as s;
