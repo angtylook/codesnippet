@@ -3,9 +3,9 @@
 #include <libavformat/avformat.h>
 #include <libswscale/swscale.h>
 
-void SaveFrame(AVFrame *pFrame, int width, int height, int iFrame)
+void SaveFrame(AVFrame* pFrame, int width, int height, int iFrame)
 {
-	FILE *pFile;
+	FILE* pFile;
 	char szFilename[32];
 	int y;
 
@@ -26,10 +26,9 @@ void SaveFrame(AVFrame *pFrame, int width, int height, int iFrame)
 	fclose(pFile);
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
-	av_register_all();
-	AVFormatContext *pFormatCtx = NULL;
+	AVFormatContext* pFormatCtx = NULL;
 	// Open video file
 	if (avformat_open_input(&pFormatCtx, argv[1], NULL, NULL) != 0)
 	{
@@ -41,14 +40,11 @@ int main(int argc, char **argv)
 	}
 	av_dump_format(pFormatCtx, 0, argv[1], 0);
 
-	AVCodecContext *pCodecCtxOrig = NULL;
-	AVCodecContext *pCodecCtx = NULL;
-
 	int videoStream = -1;
 	int i;
 	for (i = 0; i < pFormatCtx->nb_streams; i++)
 	{
-		if (pFormatCtx->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO)
+		if (pFormatCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO)
 		{
 			videoStream = i;
 			break;
@@ -58,8 +54,17 @@ int main(int argc, char **argv)
 	{
 		return -1;
 	}
-	pCodecCtxOrig = pFormatCtx->streams[videoStream]->codec;
-	AVCodec *pCodec = NULL;
+
+	AVCodecContext* pCodecCtxOrig = avcodec_alloc_context3(NULL);
+	if (!pCodecCtxOrig) {
+		return -1;
+	}
+	
+	if (avcodec_parameters_to_context(pCodecCtxOrig, pFormatCtx->streams[videoStream]->codecpar) < 0) {
+		return -1;
+	}
+
+	AVCodec* pCodec = NULL;
 	pCodec = avcodec_find_decoder(pCodecCtxOrig->codec_id);
 	if (pCodec == NULL)
 	{
@@ -67,6 +72,7 @@ int main(int argc, char **argv)
 		return -1;
 	}
 
+	AVCodecContext* pCodecCtx = NULL;
 	pCodecCtx = avcodec_alloc_context3(pCodec);
 	if (avcodec_copy_context(pCodecCtx, pCodecCtxOrig) != 0)
 	{
@@ -79,24 +85,24 @@ int main(int argc, char **argv)
 		return -1;
 	}
 
-	AVFrame *pFrameRGB = av_frame_alloc();
+	AVFrame* pFrameRGB = av_frame_alloc();
 	if (pFrameRGB == NULL)
 	{
 		return -1;
 	}
 
-	uint8_t *buffer = NULL;
+	uint8_t* buffer = NULL;
 	int numBytes;
 	numBytes = avpicture_get_size(AV_PIX_FMT_BGR24, pCodecCtx->width, pCodecCtx->height);
-	buffer = (uint8_t *)av_malloc(numBytes * sizeof(uint8_t));
-	avpicture_fill((AVPicture *)pFrameRGB, buffer, AV_PIX_FMT_RGB24, pCodecCtx->width, pCodecCtx->height);
+	buffer = (uint8_t*)av_malloc(numBytes * sizeof(uint8_t));
+	avpicture_fill((AVPicture*)pFrameRGB, buffer, AV_PIX_FMT_RGB24, pCodecCtx->width, pCodecCtx->height);
 
-	AVFrame *pFrame = NULL;
+	AVFrame* pFrame = NULL;
 	pFrame = av_frame_alloc();
-	struct SwsContext *sws_ctx = NULL;
+	struct SwsContext* sws_ctx = NULL;
 	sws_ctx = sws_getContext(pCodecCtx->width, pCodecCtx->height, pCodecCtx->pix_fmt,
-							 pCodecCtx->width, pCodecCtx->height, AV_PIX_FMT_RGB24,
-							 SWS_BILINEAR, NULL, NULL, NULL);
+		pCodecCtx->width, pCodecCtx->height, AV_PIX_FMT_RGB24,
+		SWS_BILINEAR, NULL, NULL, NULL);
 
 	int frameFinished;
 	AVPacket packet;
@@ -109,8 +115,8 @@ int main(int argc, char **argv)
 			// did we get a video frame ?
 			if (frameFinished)
 			{
-				sws_scale(sws_ctx, (uint8_t const *)pFrame->data, pFrame->linesize, 0, pCodecCtx->height,
-						  pFrameRGB->data, pFrameRGB->linesize);
+				sws_scale(sws_ctx, (uint8_t const*)pFrame->data, pFrame->linesize, 0, pCodecCtx->height,
+					pFrameRGB->data, pFrameRGB->linesize);
 				if (++i <= 5)
 				{
 					SaveFrame(pFrameRGB, pCodecCtx->width, pCodecCtx->height, i);
