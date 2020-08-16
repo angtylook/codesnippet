@@ -52,18 +52,8 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    AVCodecContext* pCodecCtxOrig = avcodec_alloc_context3(NULL);
-    if (!pCodecCtxOrig) {
-        return -1;
-    }
-
-    if (avcodec_parameters_to_context(
-            pCodecCtxOrig, pFormatCtx->streams[videoStream]->codecpar) < 0) {
-        return -1;
-    }
-
     AVCodec* pCodec = NULL;
-    pCodec = avcodec_find_decoder(pCodecCtxOrig->codec_id);
+    pCodec = avcodec_find_decoder(pFormatCtx->streams[videoStream]->codecpar->codec_id);
     if (pCodec == NULL) {
         fprintf(stderr, "Unsupported codec!\n");
         return -1;
@@ -131,7 +121,6 @@ int main(int argc, char** argv) {
     av_free(pFrameRGB);
     av_free(pFrame);
     avcodec_close(pCodecCtx);
-    avcodec_close(pCodecCtxOrig);
     avformat_close_input(&pFormatCtx);
     return 0;
 }

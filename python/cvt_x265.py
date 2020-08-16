@@ -17,7 +17,7 @@ if __name__ == "__main__":
     for rootDir, pathList, fileList in yid:
         for filePath in fileList:
             inputFile = pathlib.Path(rootDir).joinpath(filePath)
-            if inputFile.suffix != ".mp4":
+            if inputFile.suffix not in {".mp4", ".mkv", ".flv"}:
                 continue
             stem = inputFile.stem
             if stem.endswith("x265") or stem.endswith("hevc_amf"):
