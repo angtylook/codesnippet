@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.16)
 project(cpp)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 #find_package(Boost REQUIRED date_time filesystem program_options)
@@ -38,6 +38,7 @@ add_executable(rvref rvref.cpp)
 add_executable(expr expr.cpp)
 add_executable(array array.cpp)
 add_executable(regex11 regex11.cpp)
+add_executable(range_demo range_demo.cpp)
 
 #target_include_directories(array PRIVATE ${Boost_INCLUDE_DIRS})
 #target_link_libraries(array PRIVATE ${Boost_LIBRARIES})
