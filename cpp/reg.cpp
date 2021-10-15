@@ -19,9 +19,10 @@ int main() {
         //std::regex e("ab[cd]{3,}", std::regex_constants::icase);  // [...]{n,} n or more character not inside the square brackets
         //std::regex e("ab[cd]{3,5}", std::regex_constants::icase);  // [...]{n,m} n to m character not inside the square brackets
         //std::regex e("ab|de[fg]", std::regex_constants::icase);  // S | V  S or V
-        std::regex e("(abc)|de+\\1", std::regex_constants::icase);  // \1 stand for (abc) the firs group, (abc) as a group
-
-        bool match = std::regex_match(str, e);
+        //std::regex e("(abc)|de+\\1", std::regex_constants::icase);  // \1 stand for (abc) the firs group, (abc) as a group
+        std::regex email(R"(^([a-zA-Z\d])(\w|\-|(\.(?!\.)))*@[a-zA-Z\d]+\.[a-zA-Z]{2,4}$)");
+        std::regex phone(R"(^1\d{10}$)");
+        bool match = std::regex_match(str, phone);
         std::cout << (match ? "Matched": "Not matched") << std::endl << std::endl;
     }
     return 0;
