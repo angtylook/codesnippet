@@ -1,12 +1,14 @@
 cmake_minimum_required(VERSION 3.16)
 project(cpp)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 #find_package(Boost REQUIRED date_time filesystem program_options)
 #message(STATUS ${Boost_LIBRARIES})
 #message(STATUS ${Boost_INCLUDE_DIRS})
+
+find_package(nlohmann_json CONFIG REQUIRED)
 
 set(SOURCE_FILES
         const.cpp
@@ -27,6 +29,7 @@ set(SOURCE_FILES
 #target_link_libraries (${PROJECT_NAME} ${Boost_LIBRARIES})
 add_executable(constexpr const.cpp)
 add_executable(reg reg.cpp)
+add_executable(for for.cpp)
 add_executable(deduct deduct.cpp)
 add_executable(delete delete.cpp)
 add_executable(datetime datetime.cpp)
@@ -39,6 +42,10 @@ add_executable(expr expr.cpp)
 add_executable(array array.cpp)
 add_executable(regex11 regex11.cpp)
 add_executable(range_demo range_demo.cpp)
+add_executable(views views.cpp)
+add_executable(json json.cpp)
+
+target_link_libraries(json PRIVATE nlohmann_json nlohmann_json::nlohmann_json)
 
 #target_include_directories(array PRIVATE ${Boost_INCLUDE_DIRS})
 #target_link_libraries(array PRIVATE ${Boost_LIBRARIES})
