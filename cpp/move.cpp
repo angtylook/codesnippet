@@ -1,4 +1,7 @@
 #include <iostream>
+#include <vector>
+#include <string>
+#include <unordered_map>
 
 // cc -O0 -fno-elide-constructors
 
@@ -72,6 +75,20 @@ int main() {
   foo(resuable);
 
   foo(createVector());
+
+  std::vector<std::string> test1{"1", "2", "3"};
+  std::unordered_map<int, std::string> m;
+  for(auto& e : test1)
+  {
+    m[std::stoi(e)] = std::move(e);
+    std::cout << e << std::endl;
+  }
+
+  for(auto it : m)
+  {
+    std::cout << it.first << " " << it.second << std::endl;
+  }
+
   return 0;
 }
 

@@ -5,6 +5,16 @@
 #include <chrono>
 #include <iostream>
 #include <ctime>
+#include <string>
+
+long TimestampToSeconds(const std::string& timestr)
+{
+  struct tm time;
+  memset(&time, 0, sizeof(struct tm));
+  strptime(timestr.c_str(), "%Y-%m-%d %H:%M:%S", &time); //2021-08-22 00:00:00
+  time_t t = mktime(&time);
+  return t;
+}
 
 int main()
 {
