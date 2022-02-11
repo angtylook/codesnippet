@@ -16,6 +16,17 @@ long TimestampToSeconds(const std::string& timestr)
   return t;
 }
 
+time_t ToTimestamp(const std::string& timestr)
+{
+  struct tm time;
+  std::memset(&time, 0, sizeof(struct tm));
+  strptime(timestr.c_str(), "%Y-%m-%d %H:%M:%S", &time); //2021-08-22 00:00:00
+  time.tm_isdst = 0;
+  time_t t = mktime(&time);
+  struct tm ltm = *std::localtime(&t);
+  return mktime(&ltm);
+}
+
 int main()
 {
     std::ratio<2, 10> r;
