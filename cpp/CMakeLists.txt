@@ -44,6 +44,7 @@ add_executable(regex11 regex11.cpp)
 add_executable(range_demo range_demo.cpp)
 add_executable(views views.cpp)
 add_executable(json json.cpp)
+add_executable(trim_email trim_email.cpp)
 
 target_link_libraries(json PRIVATE nlohmann_json nlohmann_json::nlohmann_json)
 
