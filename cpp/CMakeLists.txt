@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.20)
 project(cpp)
 
 set(CMAKE_CXX_STANDARD 23)
@@ -8,7 +8,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 #message(STATUS ${Boost_LIBRARIES})
 #message(STATUS ${Boost_INCLUDE_DIRS})
 
-find_package(nlohmann_json CONFIG REQUIRED)
+#find_package(nlohmann_json CONFIG REQUIRED)
 
 set(SOURCE_FILES
         const.cpp
@@ -45,8 +45,10 @@ add_executable(range_demo range_demo.cpp)
 add_executable(views views.cpp)
 add_executable(json json.cpp)
 add_executable(trim_email trim_email.cpp)
+add_executable(cxx23 cxx23.cpp)
+add_executable(cxx_jthread cxx_jthread.cpp)
 
-target_link_libraries(json PRIVATE nlohmann_json nlohmann_json::nlohmann_json)
+#target_link_libraries(json PRIVATE nlohmann_json nlohmann_json::nlohmann_json)
 
 #target_include_directories(array PRIVATE ${Boost_INCLUDE_DIRS})
 #target_link_libraries(array PRIVATE ${Boost_LIBRARIES})
