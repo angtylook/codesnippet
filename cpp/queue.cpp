@@ -1,18 +1,20 @@
 #include <iostream>
+#include <chrono>
 
 #include "bounded_channel.h"
 
+using namespace std::chrono_literals;
+
 int main() {
     BoundedChannel<int> q(10);
-    for(int i = 0; i < 10; i++) {
-        q.Send(i);
-    }
 
     std::thread p([&q]{
-        for(int i = 0; i < 10; i++) {
-            int v;
-            std::cin >> v;
+        for(int i = 0; i < 50; i++) {
+            int v = i;
+            // std::cin >> v;
             q.Send(v);
+            std::cout << "push->" << v << std::endl;
+            std::this_thread::sleep_for(100ms);
         }
         q.Close();
     });
@@ -23,11 +25,12 @@ int main() {
             auto v = q.Recv();
             if(v.has_value())
             {
-                std::cout << "v=" << v.value() << std::endl;
+                std::cout << "pop v=" << v.value() << std::endl;
             } else {
                 std::cout << "no value done" << std::endl;
                 break;
             }
+            std::this_thread::sleep_for(200ms);
         }
     });
 

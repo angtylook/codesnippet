@@ -17,11 +17,16 @@ public:
         if(IsClose()) {
             return false;
         }
-
-        std::unique_lock l(m_);
-        cv_.wait(l, [this](){ return queue_.size() < max_sz_;});
-        queue_.push(std::move(v));
-        if(queue_.size() == 1) {
+        bool notify = false;
+        {
+          std::unique_lock l(m_);
+          if (queue_.size() >= max_sz_) {
+              cv_.wait(l, [this]() { return queue_.size() < max_sz_; });
+          }
+          queue_.push(std::move(v));
+          notify = queue_.size() == 1;
+        }
+        if (notify) {
             cv_.notify_one();
         }
         return true;
@@ -31,11 +36,32 @@ public:
         if(IsClose() && Empty()) {
             return std::nullopt;
         }
-        std::unique_lock l(m_);
-        cv_.wait(l, [this](){ return !queue_.empty();});
-        auto v = queue_.front();
-        queue_.pop();
-        if(queue_.empty() && !IsClose()) {
+        // !IsClose() || !Empty()
+        std::optional<T> v;
+        bool notify = false;
+        // !Empty()
+        {
+           std::unique_lock l(m_);
+           if (!queue_.empty()) {
+               v = queue_.front();
+               queue_.pop();
+           }
+           notify = queue_.size() < max_sz_;
+        }
+        if (notify) {
+            cv_.notify_one();
+        }
+        if (v.has_value()) {
+            return v;
+        }
+        {
+          std::unique_lock l(m_);
+          cv_.wait(l, [this]() { return !queue_.empty(); });
+          v = queue_.front();
+          queue_.pop();
+          notify = queue_.empty();
+        }
+        if (notify) {
             cv_.notify_one();
         }
         return v;
