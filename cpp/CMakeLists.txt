@@ -49,6 +49,7 @@ add_executable(iterator iterator.cpp)
 add_executable(unique unique.cpp)
 add_executable(cxx23 cxx23.cpp)
 add_executable(cxx_jthread cxx_jthread.cpp)
+add_executable(queue queue.cpp bounded_channel.h)
 
 #target_link_libraries(json PRIVATE nlohmann_json nlohmann_json::nlohmann_json)
 
