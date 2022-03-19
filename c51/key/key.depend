@@ -1,0 +1,4 @@
+# depslib dependency file v1.0
+1589299856 source:d:\src\key\main.c
+	<mcs51/8051.h>
+
