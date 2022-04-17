@@ -56,3 +56,16 @@ add_executable(queue queue.cpp bounded_channel.h)
 #target_include_directories(array PRIVATE ${Boost_INCLUDE_DIRS})
 #target_link_libraries(array PRIVATE ${Boost_LIBRARIES})
 
+find_package(unofficial-libuv)
+
+add_executable(uv_timer uv_timer.cpp)
+target_link_libraries(uv_timer PRIVATE unofficial::libuv::libuv)
+
+add_executable(uv_work uv_work.cpp)
+target_link_libraries(uv_work PRIVATE unofficial::libuv::libuv)
+
+add_executable(uv_loop uv_loop.cpp)
+target_link_libraries(uv_loop PRIVATE unofficial::libuv::libuv)
+
+add_executable(uv_fs uv_fs.cpp)
+target_link_libraries(uv_fs PRIVATE unofficial::libuv::libuv)
