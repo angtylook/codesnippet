@@ -52,22 +52,27 @@ add_executable(ret ret.cpp)
 add_executable(cxx_jthread cxx_jthread.cpp)
 add_executable(queue queue.cpp bounded_channel.h)
 add_executable(cycle_thread cycle_thread.h cycle_thread.cpp cycle_main.cpp)
+add_executable(normal normal.cpp)
 
 #target_link_libraries(json PRIVATE nlohmann_json nlohmann_json::nlohmann_json)
 
 #target_include_directories(array PRIVATE ${Boost_INCLUDE_DIRS})
 #target_link_libraries(array PRIVATE ${Boost_LIBRARIES})
 #[[
-find_package(unofficial-libuv)
+add_executable(boost_main boost.cpp)
+target_include_directories(boost_main PRIVATE ${Boost_INCLUDE_DIRS})
+target_link_libraries(boost_main PRIVATE ${Boost_LIBRARIES})
+
+find_package(libuv)
 
 add_executable(uv_timer uv_timer.cpp)
-target_link_libraries(uv_timer PRIVATE unofficial::libuv::libuv)
+target_link_libraries(uv_timer PRIVATE $<IF:$<TARGET_EXISTS:uv_a>,uv_a,uv>)
 
 add_executable(uv_work uv_work.cpp)
-target_link_libraries(uv_work PRIVATE unofficial::libuv::libuv)
+target_link_libraries(uv_work PRIVATE $<IF:$<TARGET_EXISTS:uv_a>,uv_a,uv>)
 
 add_executable(uv_loop uv_loop.cpp)
-target_link_libraries(uv_loop PRIVATE unofficial::libuv::libuv)
+target_link_libraries(uv_loop PRIVATE $<IF:$<TARGET_EXISTS:uv_a>,uv_a,uv>)
 
 add_executable(uv_fs uv_fs.cpp)
 target_link_libraries(uv_fs PRIVATE unofficial::libuv::libuv)
