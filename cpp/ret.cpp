@@ -1,39 +1,29 @@
 #include <string>
 #include <iostream>
-
-struct Obj
-{
-    std::string str;
-    Obj() {
-        std::cout << str << " construct" << std::endl;
-    };
-
-    Obj(const Obj& o) {
-        str = o.str;
-        std::cout << str << " copy construct" << std::endl;
-    }
-    Obj& operator=(const Obj& o) {
-        //str = o.str;
-        std::cout << str << " assign operator" << std::endl;
-        return *this;
-    }
-    ~Obj() {
-        std::cout << str << " destruct" << std::endl;
-    };
-};
-
-Obj func()
-{
-    Obj o;
-    o.str = "in func";
-    return o;
-}
+#include <regex>
 
 int main()
 {
-    int sz = sizeof(Obj);
-    Obj obj;
-    obj.str = "main";
-    obj = func();
+    std::string html =
+        "<p style=\"font-size: 15;color: blue;\">公元<span style=\"color: "
+        "red;font-weight: "
+        "bold;\">2024年5月29日</span>，神创建了本邮件，<br><span "
+        "style=\"font-style: italic; "
+        "font-weight: "
+        "bold;\">宣告摸鱼邮件系统诞生</"
+        "span>。从此，世界有了光和热，人类由此繁衍生息。</p>";
+
+    std::vector<std::string> tags;
+    std::vector<std::string> contents;
+
+    std::regex contentRegex(R"(<(\S+)(.*)>(.*)</(\1)>)");
+    std::smatch match;
+
+    if (std::regex_search(html, match, contentRegex)) {
+        for (auto& sm : match)
+        {
+            std::cout << sm.str() << std::endl;
+        }
+    }
     return 0;
 }
