@@ -4,7 +4,7 @@
 import cv2
 import cv_util
 
-image = cv_util.read_resize_aspect("F:/004.JPG")
+image = cv_util.read_example_img(cv2.IMREAD_COLOR_BGR)
 cv2.imshow("Original Image", image)
 
 gaussian = cv2.GaussianBlur(image, (7,7), 0)
