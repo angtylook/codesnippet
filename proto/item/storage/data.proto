@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package storage;
+
+import "base/item.proto";
+
+option go_package="storage";
+
+message User {
+    int64 userID = 1;
+    repeated base.Item items = 2;
+}
+

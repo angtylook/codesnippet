@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package pubc;
+
+import "base/item.proto";
+
+option go_package="pubc";
+
+message OnUserData {
+    int64 userID = 1;
+    repeated base.Item items = 2;
+}

@@ -1,0 +1,13 @@
+syntax="proto3";
+
+package base;
+
+option go_package="base";
+
+// 物品
+message Item {
+    int32 itemID = 1;
+    int32 itemType = 2;
+    int32 count = 3;
+}
+
